@@ -23,4 +23,14 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(nullable = true)
     private Role role;
+
+    @Column(nullable = false)
+    private String email;
+
+    @Column(nullable = false)
+    private String membership_type;
+
+    @Column(nullable = false)
+    private String status;
+
 }
