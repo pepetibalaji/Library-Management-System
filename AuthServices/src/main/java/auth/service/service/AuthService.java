@@ -33,6 +33,9 @@ public class AuthService {
                 .username(req.getUsername())
                 .password(encoder.encode(req.getPassword()))
                 .role(req.getRole())
+                .email(req.getEmail())
+                .status(req.getStatus())
+                .membership_type(req.getMembership_type())
                 .build();
         repo.save(u);
     }
@@ -45,6 +48,9 @@ public class AuthService {
                 .username(req.getUsername())
                 .password(encoder.encode(req.getPassword()))
                 .role(Role.MEMBER)
+                .email(req.getEmail())
+                .status(req.getStatus())
+                .membership_type(req.getMembership_type())
                 .build();
         repo.save(u);
     }
