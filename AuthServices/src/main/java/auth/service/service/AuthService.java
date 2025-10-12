@@ -1,6 +1,7 @@
 package auth.service.service;
 
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.security.authentication.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -9,6 +10,7 @@ import auth.service.Repository.UserRepository;
 import auth.service.config.JwtService;
 import auth.service.dto.LoginRequest;
 import auth.service.dto.LoginResponse;
+import auth.service.dto.Profile;
 import auth.service.dto.RegisterRequest;
 import auth.service.entity.Role;
 import auth.service.entity.User;
@@ -45,6 +47,16 @@ public class AuthService {
                 .role(Role.MEMBER)
                 .build();
         repo.save(u);
+    }
+
+    public Profile profile(String username) {
+        User user = repo.findByUsername(username)
+                .orElseThrow(() -> new userDoesNotExist("User Does not Exist"));
+
+        return Profile.builder()
+                .username(user.getUsername())
+                .role(user.getRole())
+                .build();
     }
 
     public LoginResponse login(LoginRequest req) throws IncorrectUserNameOrPassword {
