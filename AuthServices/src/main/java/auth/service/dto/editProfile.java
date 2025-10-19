@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class Profile {
+public class editProfile {
     private String username;
     private Role role;
     private String email;
