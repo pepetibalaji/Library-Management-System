@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import auth.service.Repository.UserRepository;
 import auth.service.config.JwtService;
@@ -12,6 +13,7 @@ import auth.service.dto.LoginRequest;
 import auth.service.dto.LoginResponse;
 import auth.service.dto.Profile;
 import auth.service.dto.RegisterRequest;
+import auth.service.dto.editProfile;
 import auth.service.entity.Role;
 import auth.service.entity.User;
 import auth.service.globalException.IncorrectUserNameOrPassword;
@@ -26,6 +28,7 @@ public class AuthService {
     private final AuthenticationManager authManager;
     private final JwtService jwtService;
 
+    @Transactional(rollbackFor = Exception.class)
     public void registerForAdmin(RegisterRequest req) throws UserAlreadyExists {
         if (repo.existsByUsername(req.getUsername()))
             throw new UserAlreadyExists("Username already exists");
@@ -40,6 +43,7 @@ public class AuthService {
         repo.save(u);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public void registerationForMember(RegisterRequest req) throws UserAlreadyExists {
         if (repo.existsByUsername(req.getUsername()))
             throw new UserAlreadyExists("Username already exists");
@@ -62,6 +66,9 @@ public class AuthService {
         return Profile.builder()
                 .username(user.getUsername())
                 .role(user.getRole())
+                .status(user.getStatus())
+                .email(user.getEmail())
+                .membership_type(user.getMembership_type())
                 .build();
     }
 
@@ -85,9 +92,22 @@ public class AuthService {
                 System.currentTimeMillis() + 900_000);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public void deleteUser(String req) {
         User u = repo.findByUsername(req)
                 .orElseThrow(() -> new userDoesNotExist("User Does not Exist"));
         repo.delete(u);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void updateUserProfile(editProfile profile) {
+        User user = repo.findByUsername(profile.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        user.setRole(profile.getRole());
+        user.setEmail(profile.getEmail());
+        user.setStatus(profile.getStatus());
+        user.setMembership_type(profile.getMembership_type());
+
+        repo.save(user);
     }
 }
