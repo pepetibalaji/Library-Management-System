@@ -2,6 +2,8 @@ package auth.service.service;
 
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+
 import org.springframework.security.authentication.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -109,5 +111,10 @@ public class AuthService {
         user.setMembership_type(profile.getMembership_type());
 
         repo.save(user);
+    }
+
+    public List<User> getAllUsersProfiles() {
+        List<User> users = repo.findAll();
+        return users;
     }
 }

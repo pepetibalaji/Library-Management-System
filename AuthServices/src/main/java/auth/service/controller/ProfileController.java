@@ -2,13 +2,16 @@ package auth.service.controller;
 
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import auth.service.dto.Profile;
 
 import auth.service.dto.editProfile;
+import auth.service.entity.User;
 import auth.service.service.AuthService;
 
 @RestController
@@ -27,6 +30,13 @@ public class ProfileController {
             return profile;
         }
         return null;
+    }
+
+    @GetMapping("/all")
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<User> getAllUsersProfiles() {
+        List<User> userProfiles = authService.getAllUsersProfiles();
+        return userProfiles;
     }
 
     @PutMapping("/{username}")
