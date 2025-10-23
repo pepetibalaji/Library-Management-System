@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import auth.service.dto.Profile;
 
 import auth.service.dto.editProfile;
+import auth.service.dto.editProfileByAdmin;
 import auth.service.entity.User;
 import auth.service.service.AuthService;
 
@@ -21,15 +22,11 @@ public class ProfileController {
 
     private final AuthService authService;
 
-    @GetMapping("/{username}")
-    public Profile fetchProfile(@PathVariable String username) {
+    @GetMapping
+    public Profile fetchProfile() {
         String loggedInUsername = SecurityContextHolder.getContext().getAuthentication().getName();
-        // Allow delete only if same user
-        if (loggedInUsername.equals(username)) {
-            Profile profile = authService.profile(username);
-            return profile;
-        }
-        return null;
+        Profile profile = authService.profile(loggedInUsername);
+        return profile;
     }
 
     @GetMapping("/all")
@@ -40,6 +37,14 @@ public class ProfileController {
     }
 
     @PutMapping("/{username}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<String> updateUserProfileByAdmin(@RequestBody editProfileByAdmin profile,
+            @PathVariable String username) {
+        authService.updateUserProfileByAdmin(profile, username);
+        return ResponseEntity.ok("Profile Updated Successfully");
+    }
+
+    @PutMapping
     public ResponseEntity<String> editProfile(@RequestBody editProfile profile) {
         authService.updateUserProfile(profile);
         return ResponseEntity.ok("Profile Updated Successfully");
