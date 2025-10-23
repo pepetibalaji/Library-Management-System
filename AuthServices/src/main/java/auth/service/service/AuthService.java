@@ -2,7 +2,10 @@ package auth.service.service;
 
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+
 import org.springframework.security.authentication.*;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +17,7 @@ import auth.service.dto.LoginResponse;
 import auth.service.dto.Profile;
 import auth.service.dto.RegisterRequest;
 import auth.service.dto.editProfile;
+import auth.service.dto.editProfileByAdmin;
 import auth.service.entity.Role;
 import auth.service.entity.User;
 import auth.service.globalException.IncorrectUserNameOrPassword;
@@ -100,8 +104,8 @@ public class AuthService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void updateUserProfile(editProfile profile) {
-        User user = repo.findByUsername(profile.getUsername())
+    public void updateUserProfileByAdmin(editProfileByAdmin profile, String username) {
+        User user = repo.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         user.setRole(profile.getRole());
         user.setEmail(profile.getEmail());
@@ -109,5 +113,26 @@ public class AuthService {
         user.setMembership_type(profile.getMembership_type());
 
         repo.save(user);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void updateUserProfile(editProfile profile) {
+        // Get the username from SecurityContext
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User user = repo.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setRole(profile.getRole());
+        user.setEmail(profile.getEmail());
+        user.setStatus(profile.getStatus());
+        user.setMembership_type(profile.getMembership_type());
+
+        repo.save(user);
+    }
+
+    public List<User> getAllUsersProfiles() {
+        List<User> users = repo.findAll();
+        return users;
     }
 }
