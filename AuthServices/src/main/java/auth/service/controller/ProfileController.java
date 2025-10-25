@@ -12,7 +12,6 @@ import auth.service.dto.Profile;
 
 import auth.service.dto.editProfile;
 import auth.service.dto.editProfileByAdmin;
-import auth.service.entity.User;
 import auth.service.service.AuthService;
 
 @RestController
@@ -31,8 +30,8 @@ public class ProfileController {
 
     @GetMapping("/all")
     @PreAuthorize("hasRole('ADMIN')")
-    public List<User> getAllUsersProfiles() {
-        List<User> userProfiles = authService.getAllUsersProfiles();
+    public List<Profile> getAllUsersProfiles() {
+        List<Profile> userProfiles = authService.getAllUsersProfiles();
         return userProfiles;
     }
 

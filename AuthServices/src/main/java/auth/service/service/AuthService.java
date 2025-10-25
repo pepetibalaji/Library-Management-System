@@ -3,6 +3,7 @@ package auth.service.service;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -68,6 +69,7 @@ public class AuthService {
                 .orElseThrow(() -> new userDoesNotExist("User Does not Exist"));
 
         return Profile.builder()
+                .id(user.getId())
                 .username(user.getUsername())
                 .role(user.getRole())
                 .status(user.getStatus())
@@ -106,7 +108,7 @@ public class AuthService {
     @Transactional(rollbackFor = Exception.class)
     public void updateUserProfileByAdmin(editProfileByAdmin profile, String username) {
         User user = repo.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new userDoesNotExist("User not found"));
         user.setRole(profile.getRole());
         user.setEmail(profile.getEmail());
         user.setStatus(profile.getStatus());
@@ -121,7 +123,7 @@ public class AuthService {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
         User user = repo.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new userDoesNotExist("User not found"));
 
         user.setRole(profile.getRole());
         user.setEmail(profile.getEmail());
@@ -131,8 +133,17 @@ public class AuthService {
         repo.save(user);
     }
 
-    public List<User> getAllUsersProfiles() {
+    public List<Profile> getAllUsersProfiles() {
         List<User> users = repo.findAll();
-        return users;
+        return users.stream()
+                .map(u -> new Profile(
+                        u.getId(),
+                        u.getUsername(),
+                        u.getRole(),
+                        u.getEmail(),
+                        u.getStatus(),
+                        u.getMembership_type()))
+                .collect(Collectors.toList());
     }
+
 }
