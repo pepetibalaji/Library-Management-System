@@ -8,7 +8,8 @@
       "mainClass": "auth.service.ServiceApplication",
       "projectName": "service",
       "args": "",
-      "envFile": "${workspaceFolder}/.env"
+      "envFile": "${workspaceFolder}/.env",
+      "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=65000 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=service"
     },
     {
       "type": "java",
@@ -17,6 +18,17 @@
       "cwd": "${workspaceFolder}",
       "mainClass": "cloud.gateway.GatewayApplication",
       "projectName": "gateway",
+      "args": "",
+      "envFile": "${workspaceFolder}/.env",
+      "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=65022 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=gateway"
+    },
+    {
+      "type": "java",
+      "name": "Spring Boot-RegistryApplication<registry>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "service.registry.RegistryApplication",
+      "projectName": "registry",
       "args": "",
       "envFile": "${workspaceFolder}/.env"
     }
