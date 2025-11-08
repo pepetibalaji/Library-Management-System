@@ -1,0 +1,13 @@
+package bookservice.dto;
+
+import lombok.Builder;
+import lombok.Data;
+
+@Data
+@Builder
+public class Editbook {
+    private String title;
+    private String author;
+    private String isbn;
+    private Long quantity;
+}
