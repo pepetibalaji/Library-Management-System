@@ -30,6 +30,17 @@
       "mainClass": "service.registry.RegistryApplication",
       "projectName": "registry",
       "args": "",
+      "envFile": "${workspaceFolder}/.env",
+      "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=55832 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=registry"
+    },
+    {
+      "type": "java",
+      "name": "Spring Boot-BookServiceApplication<book_service>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "bookservice.BookServiceApplication",
+      "projectName": "book_service",
+      "args": "",
       "envFile": "${workspaceFolder}/.env"
     }
   ]
