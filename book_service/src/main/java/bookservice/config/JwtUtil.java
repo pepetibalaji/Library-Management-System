@@ -8,9 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class JwtUtil {
@@ -18,14 +16,13 @@ public class JwtUtil {
     @Value("${jwt.secret}")
     private String secret;
 
-    @Value("${jwt.expiration-ms:86400000}") // default 24h
+    @Value("${jwt.expiration-ms:86400000}")
     private long jwtExpirationMs;
 
     private Key getSigningKey() {
         return Keys.hmacShaKeyFor(secret.getBytes());
     }
 
-    /** ✅ Generate JWT token with username + roles */
     public String generateToken(String username, List<String> roles) {
         return Jwts.builder()
                 .setSubject(username)
@@ -36,21 +33,18 @@ public class JwtUtil {
                 .compact();
     }
 
-    /** ✅ Extract username from token */
     public String extractUsername(String token) {
         return extractAllClaims(token).getSubject();
     }
 
-    /** ✅ Extract roles list from token */
     public List<String> extractRoles(String token) {
         Claims claims = extractAllClaims(token);
-        Object rolesObj = claims.get("role"); // your token has "role"
+        Object rolesObj = claims.get("role");
 
         if (rolesObj == null) {
             return List.of();
         }
 
-        // If it's already a list, convert to List<String>
         if (rolesObj instanceof List<?>) {
             return ((List<?>) rolesObj)
                     .stream()
@@ -58,11 +52,9 @@ public class JwtUtil {
                     .toList();
         }
 
-        // If it's a single value (String or something else), wrap it in a list
         return List.of(rolesObj.toString());
     }
 
-    /** ✅ Validate if token is well-formed, signed, and not expired */
     public boolean isTokenValid(String token) {
         try {
             Claims claims = extractAllClaims(token);
@@ -76,7 +68,6 @@ public class JwtUtil {
         return claims.getExpiration().before(new Date());
     }
 
-    /** ✅ Extract all claims from token */
     private Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())

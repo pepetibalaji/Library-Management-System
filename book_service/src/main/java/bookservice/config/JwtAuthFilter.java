@@ -37,34 +37,27 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String token = header.substring(7);
 
         try {
-            // 1️⃣ Validate token
             if (!jwtUtil.isTokenValid(token)) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
 
-            // 2️⃣ Extract user details
             String username = jwtUtil.extractUsername(token);
-            List<String> roles = jwtUtil.extractRoles(token); // <-- implement this in JwtUtil
+            List<String> roles = jwtUtil.extractRoles(token);
 
-            // 3️⃣ Convert roles to Spring authorities
             List<SimpleGrantedAuthority> authorities = roles.stream()
                     .map(SimpleGrantedAuthority::new)
                     .collect(Collectors.toList());
 
-            // 4️⃣ Create Authentication object
             UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(username, null,
                     authorities);
 
-            // 5️⃣ Save it in SecurityContext
             SecurityContextHolder.getContext().setAuthentication(auth);
 
         } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
-
-        // 6️⃣ Continue chain
         filterChain.doFilter(request, response);
     }
 }
