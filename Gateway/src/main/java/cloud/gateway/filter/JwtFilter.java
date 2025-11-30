@@ -38,8 +38,11 @@ public class JwtFilter implements GlobalFilter, Ordered {
             Claims claims = jwtUtil.validateToken(token);
             // Optionally forward roles as header
             exchange = exchange.mutate()
-                    .request(r -> r.headers(h -> h.add("X-Role", claims.get("role", String.class))))
-                    .build();
+                .request(r -> r.headers(h -> {
+                    h.add("X-Role", claims.get("role", String.class));
+                    h.add("Authorization", "Bearer " + token);
+        }))
+        .build();
         } catch (Exception e) {
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
             return exchange.getResponse().setComplete();

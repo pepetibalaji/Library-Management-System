@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import bookservice.dto.AddNewBook;
+import bookservice.dto.DecrementBookCount;
 import bookservice.dto.DeleteBook;
 import bookservice.dto.Editbook;
 import bookservice.dto.RetrieveBook;
@@ -51,10 +52,14 @@ public class BookServiceController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public DeleteBook deleteBook(@PathVariable Long id) {
         return bookservice_class.deleteBook(id);
 
     }
+    @PutMapping("/decrement")
+    public DecrementBookCount decrementBookCount(@RequestParam Long id) {
+        return bookservice_class.decrementBookCount(id);
+}
 
 }

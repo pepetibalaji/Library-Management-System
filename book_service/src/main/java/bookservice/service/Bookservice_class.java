@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import bookservice.dto.AddNewBook;
+import bookservice.dto.DecrementBookCount;
 import bookservice.dto.DeleteBook;
 import bookservice.dto.Editbook;
 import bookservice.dto.RetrieveBook;
@@ -72,7 +73,24 @@ public class Bookservice_class {
                                 .isbn(book.getIsbn())
                                 .quantity(book.getQuantity())
                                 .build();
+        } 
+        @Transactional(rollbackFor = Exception.class)
+        public DecrementBookCount decrementBookCount(Long id) {
+        BookService book = bookRepository.findById(id)
+                .orElseThrow(() -> new BooksNotFound("Book not found with id: " + id));
+
+        if (book.getQuantity() < 1) {
+        throw new RuntimeException("Not enough books in stock");
         }
+
+        book.setQuantity(book.getQuantity() - 1);
+        bookRepository.save(book);
+
+        return DecrementBookCount.builder()
+                .quantity(book.getQuantity())
+                .build();
+        }
+
 
         @Transactional(rollbackFor = Exception.class)
         public DeleteBook deleteBook(Long id) {

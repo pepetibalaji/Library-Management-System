@@ -1,4 +1,4 @@
-package bookservice.config;
+package library.borrow.config;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -45,10 +45,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             String username = jwtUtil.extractUsername(token);
             List<String> roles = jwtUtil.extractRoles(token);
 
-            List<SimpleGrantedAuthority> authorities =
-                    roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+            var authorities = roles.stream()
+                    .map(SimpleGrantedAuthority::new)
+                    .collect(Collectors.toList());
 
-            // 👇 IMPORTANT: store token inside credentials
+            // 👇 Store token in SecurityContext – NOT ThreadLocal
             UsernamePasswordAuthenticationToken auth =
                     new UsernamePasswordAuthenticationToken(username, token, authorities);
 
@@ -62,4 +63,3 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 }
-

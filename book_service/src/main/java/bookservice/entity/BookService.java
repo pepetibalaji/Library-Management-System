@@ -14,15 +14,15 @@ public class BookService {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String title;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String author;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String isbn;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Long quantity;
 }
