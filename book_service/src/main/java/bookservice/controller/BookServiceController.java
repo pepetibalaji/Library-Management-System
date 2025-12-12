@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.RestController;
 import bookservice.dto.AddNewBook;
 import bookservice.dto.DecrementBookCount;
 import bookservice.dto.DeleteBook;
-import bookservice.dto.Editbook;
+import bookservice.dto.EditBook;
 import bookservice.dto.RetrieveBook;
-import bookservice.service.Bookservice_class;
+import bookservice.service.BookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,39 +27,40 @@ import org.springframework.web.bind.annotation.PathVariable;
 @RequiredArgsConstructor
 public class BookServiceController {
 
-    private final Bookservice_class bookservice_class;
+    private final BookService bookService;
 
     @PostMapping
     public AddNewBook addNewBook(@RequestBody AddNewBook entity) {
-        bookservice_class.save(entity);
+        bookService.save(entity);
         return entity;
     }
 
     @GetMapping("/all")
-    public List<RetrieveBook> getAllbooks() {
-        return bookservice_class.getAllBooks();
+    public List<RetrieveBook> getAllBooks() {
+        return bookService.getAllBooks();
     }
 
     @GetMapping
     public RetrieveBook getRequestedBooks(@RequestParam Long id) {
-        return bookservice_class.getRequestedBook(id);
+        return bookService.getRequestedBook(id);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public Editbook editbook(@PathVariable Long id, @RequestBody Editbook entity) {
-        return bookservice_class.editbook(id, entity);
+    public EditBook editbook(@PathVariable Long id, @RequestBody EditBook entity) {
+        return bookService.editbook(id, entity);
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
     public DeleteBook deleteBook(@PathVariable Long id) {
-        return bookservice_class.deleteBook(id);
+        return bookService.deleteBook(id);
 
     }
+
     @PutMapping("/decrement")
     public DecrementBookCount decrementBookCount(@RequestParam Long id) {
-        return bookservice_class.decrementBookCount(id);
-}
+        return bookService.decrementBookCount(id);
+    }
 
 }

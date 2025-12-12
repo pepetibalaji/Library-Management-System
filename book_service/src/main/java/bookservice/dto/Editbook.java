@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class Editbook {
+public class EditBook {
     private String title;
     private String author;
     private String isbn;

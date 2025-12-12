@@ -12,16 +12,24 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> memberDoesNotExist(MemberDoesNotExist ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
+
     @ExceptionHandler(BookDoesNotExist.class)
-    public ResponseEntity<String> bookDoesNotExist(MemberDoesNotExist ex) {
+    public ResponseEntity<String> bookDoesNotExist(BookDoesNotExist ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
+
     @ExceptionHandler(UserDeactivated.class)
-    public ResponseEntity<String> userDeactivated(MemberDoesNotExist ex) {
+    public ResponseEntity<String> userDeactivated(UserDeactivated ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.UNAUTHORIZED);
     }
+
     @ExceptionHandler(OutOfStock.class)
-    public ResponseEntity<String> outOfStock(MemberDoesNotExist ex) {
+    public ResponseEntity<String> outOfStock(OutOfStock ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(BookAlreadyReturned.class)
+    public ResponseEntity<String> BookAlreadyReturned(BookAlreadyReturned ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
 }
