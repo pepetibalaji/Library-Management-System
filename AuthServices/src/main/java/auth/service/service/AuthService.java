@@ -78,31 +78,31 @@ public class AuthService {
                 .build();
     }
 
-    public LoginResponse login(LoginRequest req) throws IncorrectUserNameOrPassword {
+    public LoginResponse login(LoginRequest userCredentials) throws IncorrectUserNameOrPassword {
         try {
             authManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(req.getUsername(), req.getPassword()));
+                    new UsernamePasswordAuthenticationToken(userCredentials.getUsername(),
+                            userCredentials.getPassword()));
         } catch (BadCredentialsException ex) {
-            // Password is incorrect
             throw new IncorrectUserNameOrPassword("Incorrect password");
         } catch (DisabledException ex) {
             throw new IncorrectUserNameOrPassword("Your account is disabled. Contact support.");
         } catch (LockedException ex) {
             throw new IncorrectUserNameOrPassword("Your account is locked. Contact support.");
         }
-        User u = repo.findByUsername(req.getUsername())
+        User user = repo.findByUsername(userCredentials.getUsername())
                 .orElseThrow(() -> new userDoesNotExist("User Does not Exist"));
-        String access = jwtService.generateAccessToken(u.getUsername(), u.getRole().name());
-        String refresh = jwtService.generateRefreshToken(u.getUsername());
-        return new LoginResponse(access, refresh, u.getRole().name(),
+        String access = jwtService.generateAccessToken(user.getUsername(), user.getRole().name());
+        String refresh = jwtService.generateRefreshToken(user.getUsername());
+        return new LoginResponse(access, refresh, user.getRole().name(),
                 System.currentTimeMillis() + 900_000);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void deleteUser(String req) {
-        User u = repo.findByUsername(req)
+    public void deleteUser(String username) {
+        User user = repo.findByUsername(username)
                 .orElseThrow(() -> new userDoesNotExist("User Does not Exist"));
-        repo.delete(u);
+        repo.delete(user);
     }
 
     @Transactional(rollbackFor = Exception.class)

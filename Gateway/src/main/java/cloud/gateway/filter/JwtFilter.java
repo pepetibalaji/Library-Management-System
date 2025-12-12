@@ -24,7 +24,6 @@ public class JwtFilter implements GlobalFilter, Ordered {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         String path = exchange.getRequest().getPath().toString();
 
-        // Skip token check for Auth Service
         List<String> publicPaths = List.of("/register", "/login");
         if (publicPaths.stream().anyMatch(path::startsWith)) {
             return chain.filter(exchange);
@@ -36,13 +35,12 @@ public class JwtFilter implements GlobalFilter, Ordered {
         }
         try {
             Claims claims = jwtUtil.validateToken(token);
-            // Optionally forward roles as header
             exchange = exchange.mutate()
-                .request(r -> r.headers(h -> {
-                    h.add("X-Role", claims.get("role", String.class));
-                    h.add("Authorization", "Bearer " + token);
-        }))
-        .build();
+                    .request(r -> r.headers(h -> {
+                        h.add("X-Role", claims.get("role", String.class));
+                        h.add("Authorization", "Bearer " + token);
+                    }))
+                    .build();
         } catch (Exception e) {
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
             return exchange.getResponse().setComplete();
