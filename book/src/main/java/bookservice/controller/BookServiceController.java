@@ -47,7 +47,7 @@ public class BookServiceController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public EditBook editbook(@PathVariable Long id, @RequestBody EditBook entity) {
+    public EditBook editBook(@PathVariable Long id, @RequestBody EditBook entity) {
         return bookService.editbook(id, entity);
     }
 
